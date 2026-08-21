@@ -2,18 +2,55 @@
 
 ## Práctica 1 - QuetzalDev S.A.
 
-**Curso:** Redes de Computadoras 1
-**Universidad:** Universidad de San Carlos de Guatemala
-**Facultad:** Facultad de Ingeniería
-**Carrera:** Ingeniería en Ciencias y Sistemas
-**Carnet:** 202113318
-**Semestre:** Segundo Semestre 2026
+| Información | Detalle |
+|---|---|
+| **Curso** | Redes de Computadoras 1 |
+| **Universidad** | Universidad de San Carlos de Guatemala |
+| **Facultad** | Facultad de Ingeniería |
+| **Carrera** | Ingeniería en Ciencias y Sistemas |
+| **Carnet** | 202113318 |
+| **Semestre** | Segundo Semestre 2026 |
+
+---
+
+## Índice
+
+1. [Introducción](#1-introducción)
+2. [Descripción General de la Red](#2-descripción-general-de-la-red)
+3. [Diseño de la Topología Física](#3-diseño-de-la-topología-física)
+4. [Cuarto de Telecomunicaciones - MDF](#4-cuarto-de-telecomunicaciones---mdf)
+5. [Puntos y Tomas de Red](#5-puntos-y-tomas-de-red)
+6. [Cableado Estructurado](#6-cableado-estructurado)
+7. [Medios de Transmisión](#7-medios-de-transmisión)
+8. [Estimación de Distancias de Cableado](#8-estimación-de-distancias-de-cableado)
+9. [Inventario de Equipos](#9-inventario-de-equipos)
+10. [Verificación de Capacidad de Patch Panels y Switches](#10-verificación-de-capacidad-de-patch-panels-y-switches)
+11. [Canalización del Cableado](#11-canalización-del-cableado)
+12. [Rack del MDF](#12-rack-del-mdf)
+13. [Respaldo de Energía - UPS](#13-respaldo-de-energía---ups)
+14. [Estándares T568A y T568B](#14-estándares-t568a-y-t568b)
+15. [Tipo de Cable por Enlace](#15-tipo-de-cable-por-enlace)
+16. [Etiquetado del Cableado](#16-etiquetado-del-cableado)
+17. [Comparación con el Estándar TIA/EIA-606](#17-comparación-con-el-estándar-tiaeia-606)
+18. [Flujo de Conexión End-to-End](#18-flujo-de-conexión-end-to-end)
+19. [Consideraciones de Escalabilidad Futura](#19-consideraciones-de-escalabilidad-futura)
+20. [Presupuesto Estimado](#20-presupuesto-estimado)
+21. [Conclusiones](#21-conclusiones)
+22. [Referencias](#22-referencias)
 
 ---
 
 ## 1. Introducción
 
-Breve descripción del objetivo del manual y del diseño físico de red propuesto para QuetzalDev S.A.
+El presente Manual Técnico documenta el diseño físico de la infraestructura de red propuesta para QuetzalDev S.A., considerando la distribución de los departamentos, dispositivos finales, switches, puntos de red, cableado estructurado, canalización y elementos de telecomunicaciones requeridos para su implementación.
+
+La propuesta se desarrolla desde el enfoque de la Capa 1 del modelo OSI, por lo que se concentra principalmente en los componentes físicos de la red, incluyendo el cableado horizontal, el cableado troncal, las tomas de red, patch panels, fibra óptica, ODF, rack, sistema de respaldo eléctrico y medios de transmisión.
+
+El diseño contempla un total de **48 dispositivos finales**, distribuidos entre computadoras de escritorio, laptops y servidores ubicados en ocho áreas de la empresa. Cada departamento dispone de un switch local conectado mediante cableado troncal hacia un switch principal ubicado en el cuarto de telecomunicaciones principal o MDF.
+
+Para el cableado horizontal se propone utilizar **UTP categoría 6**, mientras que para los ocho enlaces troncales se utilizará **fibra óptica multimodo**. Además, se definen criterios de etiquetado, estimaciones de distancia, capacidad de crecimiento, estándares de terminación T568A y T568B, organización del cableado y un presupuesto estimado de los componentes requeridos.
+
+El objetivo del manual es proporcionar una referencia técnica clara y organizada que permita comprender la estructura física de la red propuesta y sirva como base para una posible implementación, mantenimiento o ampliación futura de la infraestructura de QuetzalDev S.A.
 
 ---
 
@@ -64,8 +101,6 @@ Cada switch departamental funcionará posteriormente como nodo central de una to
 
 La estructura general puede representarse de la siguiente manera:
 
-La estructura general puede representarse de la siguiente manera:
-
 ```text
                               MDF
                                │
@@ -111,6 +146,37 @@ La elección se realizó debido a que la infraestructura especificada para Quetz
 
 Una ventaja importante de esta topología es que una falla en el cable de un dispositivo afecta únicamente a dicho equipo y no al resto de los hosts del departamento. Asimismo, la disponibilidad de puertos libres en los switches permitirá agregar dispositivos en el futuro.
 
+### 3.3 Diagrama de Diseño Físico
+
+El siguiente diagrama representa la distribución física propuesta para la red de QuetzalDev S.A.
+
+En el plano se muestran:
+
+- La ubicación de los ocho departamentos.
+- El cuarto de telecomunicaciones principal (MDF).
+- El switch principal ubicado en el MDF.
+- Los ocho switches departamentales.
+- Las computadoras de escritorio, laptops y servidores.
+- Los puntos y tomas de red.
+- El cableado horizontal UTP Cat 6.
+- El cableado troncal mediante fibra óptica multimodo.
+- Las rutas principales de distribución del cableado.
+
+Para facilitar la interpretación del diseño se utilizó la siguiente representación:
+
+- **Verde:** cableado horizontal UTP Cat 6.
+- **Azul:** cableado troncal de fibra óptica multimodo.
+- **PC:** computadora de escritorio.
+- **LAP:** laptop.
+- **SRV:** servidor.
+- **SW:** switch.
+- **PR:** punto de red.
+- **MDF:** cuarto de telecomunicaciones principal.
+
+![Diagrama físico de la red de QuetzalDev S.A.](./img/Diagrama_Fisico_QuetzalDev.png)
+
+**Figura 1. Diagrama de diseño físico propuesto para QuetzalDev S.A.**
+
 ---
 
 ## 4. Cuarto de Telecomunicaciones - MDF
@@ -140,7 +206,7 @@ La zona próxima al Hall Central y Vestíbulo ofrece un mejor equilibrio debido 
 * **Distribución del cableado:** su posición facilita la salida de rutas de canalización hacia los sectores izquierdo, derecho y superior del edificio.
 * **Conexión con el Data Center:** aunque el Data Center no se encuentra inmediatamente junto al MDF, la distancia estimada de su recorrido se encuentra aproximadamente **22 metros**, por lo que continúa siendo viable la interconexión mediante el cableado troncal propuesto.
 
-Dentro del MDF se contempla posteriormente la instalación del switch principal, elementos de terminación del cableado, organización de fibra, rack o gabinete y el sistema de respaldo eléctrico correspondiente.
+Dentro del MDF se contempla la instalación del switch principal, elementos de terminación del cableado, organización de fibra, rack y el sistema de respaldo eléctrico correspondiente.
 
 ---
 
@@ -356,7 +422,7 @@ DataCenter-PR03
 
 El identificador será asociado al puerto de la toma, al cable correspondiente y a su terminación dentro del sistema de distribución, permitiendo reconocer de forma clara el origen y destino de cada enlace.
 
-El etiquetado de los **enlaces troncales** será documentado posteriormente utilizando el formato:
+El etiquetado de los **enlaces troncales** utiliza el siguiente formato:
 
 ```text
 MDF-[Área/Departamento]
@@ -375,7 +441,7 @@ MDF-Backend
 MDF-DataCenter
 ```
 
-La comparación entre este esquema simplificado y el estándar **TIA/EIA-606** será desarrollada posteriormente en la sección correspondiente del Manual Técnico.
+La comparación entre este esquema simplificado y el estándar **TIA/EIA-606** se presenta en la sección 17 del presente Manual Técnico.
 
 
 ---
@@ -567,7 +633,7 @@ Al transmitir la información mediante señales ópticas y no mediante señales 
 
 #### Distancia
 
-Las dimensiones del edificio no representan una limitación para la utilización de fibra multimodo. Incluso el recorrido estimado hacia el Data Center, considerado uno de los enlaces más largos, se encuentra aproximadamente entre **28 y 30 metros**.
+Las dimensiones del edificio no representan una limitación para la utilización de fibra multimodo. Incluso el recorrido estimado hacia el Data Center, considerado uno de los enlaces troncales más largos, es de aproximadamente **22 metros**, por lo que se mantiene dentro de un rango adecuado para la solución de fibra óptica multimodo propuesta.
 
 #### Costo
 
@@ -855,13 +921,15 @@ Después de utilizar aproximadamente 344.3 m, quedaría un margen de cable dispo
 
 Las cantidades calculadas corresponden a estimaciones basadas en las dimensiones arquitectónicas proporcionadas y deberán verificarse mediante mediciones físicas antes de una implementación real.
 
+Las rutas representadas en el diagrama físico final corresponden a los recorridos considerados para estas estimaciones. Debido a que el diseño se realiza a partir de un plano arquitectónico y una representación en Cisco Packet Tracer, las distancias indicadas son aproximadas y deberán validarse mediante mediciones físicas antes de realizar una instalación real.
+
 ---
 
 ## 9. Inventario de Equipos
 
 La infraestructura de QuetzalDev S.A. contará con equipos de distribución y elementos de terminación destinados a organizar tanto el cableado horizontal como el cableado troncal.
 
-En esta sección se dimensionan inicialmente los switches y patch panels. Los modelos y marcas comerciales serán seleccionados posteriormente durante la elaboración del presupuesto.
+En esta sección se dimensionan los switches, patch panels y demás elementos de distribución requeridos para la infraestructura. Los requerimientos técnicos definidos sirven como base para los modelos y referencias comerciales considerados en el presupuesto.
 
 ---
 
@@ -899,6 +967,8 @@ En total se requieren inicialmente:
   * Legal.
   * Dirección General.
   * Data Center.
+
+Las rutas representadas en el diagrama físico final corresponden a los recorridos considerados para estas estimaciones. Debido a que el diseño se realiza a partir de un plano arquitectónico y una representación en Cisco Packet Tracer, las distancias indicadas son aproximadas y deberán validarse mediante mediciones físicas antes de realizar una instalación real.
 
 * **4 switches de 16 puertos RJ45**
 
@@ -1003,13 +1073,17 @@ En total se utilizarán **8 patch panels**, uno por cada área.
 
 Los patch panels deberán ser compatibles con **UTP Cat 6** y conservar el esquema de identificación establecido para cada punto de red.
 
-Por ejemplo, un enlace identificado como:
+Por ejemplo, el punto de red:
 
 `Recepcion-PR01`
 
-deberá poder relacionarse físicamente con:
+se encuentra asociado físicamente a la toma:
 
-**Toma Recepcion-PR01 → puerto correspondiente del patch panel → switch de Recepción**
+`REC-T01`
+
+y deberá poder relacionarse durante todo su recorrido mediante:
+
+**Toma `REC-T01` / Punto `Recepcion-PR01` → cableado horizontal → puerto correspondiente del patch panel → switch de Recepción**
 
 Esto facilitará la localización y administración de cada enlace durante las tareas de mantenimiento.
 
@@ -1084,7 +1158,7 @@ Cada enlace óptico conservará el esquema de etiquetado definido para el cablea
 | MDF - Backend | `MDF-Backend` |
 | MDF - Data Center | `MDF-DataCenter` |
 
-El modelo específico del ODF, los conectores y los accesorios ópticos serán seleccionados posteriormente durante la elaboración del presupuesto, verificando su compatibilidad con la fibra multimodo y los equipos de red seleccionados.
+La selección definitiva del ODF, los conectores y los accesorios ópticos deberá verificar su compatibilidad con la fibra multimodo, los módulos ópticos y los equipos de red utilizados en la implementación.
 
 ### 9.4 Tomas, Conectores y Accesorios
 
@@ -1171,7 +1245,7 @@ En total se contemplan **16 patch cords ópticos**, correspondientes a dos por c
 - uno en el extremo del MDF;
 - uno en el extremo del switch departamental.
 
-El tipo exacto de conector óptico será seleccionado posteriormente según los módulos SFP/SFP+ y el ODF utilizados.
+El tipo definitivo de conector óptico deberá ser compatible con los módulos SFP/SFP+, los patch cords ópticos, las terminaciones departamentales y el ODF utilizados.
 
 ---
 
@@ -1187,7 +1261,38 @@ El tipo exacto de conector óptico será seleccionado posteriormente según los 
 | Cajas de terminación óptica departamentales | 8 |
 | ODF | 1 |
 
-Las cantidades anteriores corresponden a la infraestructura actual. Durante la elaboración del presupuesto se podrán incluir unidades adicionales de reserva para mantenimiento o sustitución de componentes.
+Las cantidades anteriores corresponden a la infraestructura actual. En una implementación real se recomienda considerar unidades adicionales de reserva para mantenimiento, sustitución de componentes y futuras ampliaciones.
+
+### 9.5 Compatibilidad del Backbone Óptico
+
+La implementación del backbone requiere que los switches, módulos ópticos, fibra y elementos de terminación sean compatibles entre sí.
+
+La infraestructura contempla:
+
+- 8 switches departamentales con al menos una interfaz óptica.
+- 1 switch principal con al menos 8 interfaces ópticas.
+- 16 módulos ópticos en total, uno por cada extremo de los 8 enlaces troncales.
+- 8 enlaces de fibra óptica multimodo dúplex.
+- 1 ODF con capacidad para 24 fibras.
+- 8 terminaciones ópticas departamentales.
+- 16 patch cords ópticos.
+
+Antes de adquirir los equipos deberán verificarse como mínimo los siguientes aspectos:
+
+- Compatibilidad entre los puertos SFP/SFP+ de los switches y los módulos ópticos.
+- Velocidad soportada por los módulos y los switches.
+- Tipo de fibra multimodo utilizado.
+- Longitud de onda de los transceptores.
+- Tipo de conector utilizado por los módulos, ODF y terminaciones ópticas.
+- Distancia máxima soportada por la combinación de fibra y transceptores.
+
+Todos los enlaces del backbone deberán utilizar componentes compatibles y mantener el mismo criterio tecnológico en ambos extremos.
+
+La selección definitiva entre SFP o SFP+ dependerá de los modelos comerciales adquiridos. Por esta razón, el presente diseño define el requerimiento de interfaces ópticas sin limitar la solución a un modelo específico.
+
+El ODF de 24 fibras dispone de capacidad suficiente para los 16 hilos actualmente requeridos y mantiene 8 fibras disponibles, equivalentes a capacidad para hasta 4 enlaces dúplex adicionales.
+
+> **Nota:** Los modelos de switches representados en Cisco Packet Tracer se utilizan como referencia gráfica del diseño físico. La implementación real deberá utilizar equipos que cumplan con la cantidad de puertos RJ45 e interfaces ópticas establecidas en este Manual Técnico.
 
 
 ---
@@ -1246,7 +1351,7 @@ El switch principal del MDF deberá concentrar los ocho enlaces troncales proven
 
 El equipo seleccionado deberá disponer como mínimo de **8 interfaces SFP/SFP+**.
 
-Para permitir crecimiento futuro se seleccionará, durante la elaboración del presupuesto, un modelo comercial que disponga de una cantidad superior de interfaces ópticas.
+Para permitir crecimiento futuro, el equipo comercial considerado deberá disponer de una cantidad superior a las ocho interfaces ópticas actualmente requeridas.
 
 ### 10.4 Resultado del Dimensionamiento
 
@@ -1309,7 +1414,7 @@ La estructura general será:
 
 ### 11.2 Canalización del Cableado Troncal
 
-Para los ocho enlaces de fibra óptica multimodo se propone utilizar una **bandeja o escalerilla metálica cerrada** como ruta principal de distribución.
+Para los ocho enlaces de fibra óptica multimodo se propone utilizar una **bandeja metálica cerrada** como ruta principal de distribución.
 
 Esta canalización partirá desde el MDF y recorrerá principalmente la zona del Hall Central y los corredores del edificio, desde donde se realizarán derivaciones hacia cada departamento.
 
@@ -1368,7 +1473,7 @@ Aunque ambos sistemas forman parte de la misma infraestructura física, se mante
 | Segmento | Medio | Canalización propuesta |
 |---|---|---|
 | Horizontal | UTP Cat 6 | Canaleta cerrada de PVC |
-| Troncal | Fibra óptica multimodo | Bandeja/escalerilla metálica cerrada |
+| Troncal | Fibra óptica multimodo | Bandeja metálica cerrada |
 
 Esta diferenciación facilita la identificación de las rutas y reduce la posibilidad de confundir el cableado de usuario con los enlaces principales del backbone.
 
@@ -1387,6 +1492,13 @@ Durante la instalación se deberán considerar los siguientes criterios:
 - Mantener una separación adecuada respecto a instalaciones eléctricas cuando sea posible.
 
 La ruta definitiva será representada sobre el plano arquitectónico mediante líneas diferenciadas para el cableado troncal y el cableado horizontal.
+
+En el diagrama físico final, las rutas de canalización se representan de forma simplificada mediante líneas de diferente color:
+
+- **Verde:** recorrido correspondiente al cableado horizontal UTP Cat 6.
+- **Azul:** recorrido correspondiente al cableado troncal de fibra óptica multimodo.
+
+Las líneas representan las rutas generales propuestas y no la posición exacta de cada canaleta o bandeja. Durante una implementación real, el recorrido definitivo deberá ajustarse a las condiciones físicas del edificio, manteniendo las distancias, protección y criterios de instalación establecidos en este manual.
 
 ---
 
@@ -1420,10 +1532,11 @@ La siguiente distribución representa una propuesta inicial de utilización del 
 | Switch principal | 1U |
 | Organizador horizontal adicional | 1U |
 | Bandeja o espacio para equipo auxiliar | 1U |
-| UPS | 2U - 3U |
 | Espacio reservado para crecimiento | 4U o más |
 
-La distribución exacta dependerá de las dimensiones de los equipos seleccionados durante la elaboración del presupuesto.
+El UPS podrá instalarse en la parte inferior del rack si el modelo seleccionado permite montaje en rack, o ubicarse sobre una base adecuada dentro del MDF en caso de utilizar un modelo tipo torre.
+
+La distribución exacta dependerá de las dimensiones y características de los equipos seleccionados durante la adquisición.
 
 ### 12.3 Justificación del Rack de Piso
 
@@ -1464,27 +1577,37 @@ El rack puede representarse conceptualmente de la siguiente manera:
 |  | Organizador |
 |  | Espacio disponible |
 |  | Espacio disponible |
-| Parte inferior | UPS |
+| Parte inferior / área cercana | UPS |
 
-Se recomienda colocar el UPS en la zona inferior debido a su peso, mientras que los elementos de interconexión y distribución se mantienen en posiciones superiores para facilitar la organización del cableado.
+Se recomienda mantener los elementos de interconexión y distribución en posiciones superiores para facilitar la organización del cableado. El UPS deberá ubicarse en la zona inferior del rack cuando sea compatible con montaje en rack o, en caso de utilizar un modelo tipo torre, sobre una superficie estable dentro del MDF.
 
 ---
 
 ## 13. Respaldo de Energía - UPS
 
-La infraestructura de red requiere un sistema de respaldo eléctrico que permita mantener operativos los equipos activos ante interrupciones breves del suministro de energía.
+La infraestructura principal ubicada en el MDF requiere un sistema de respaldo eléctrico que permita mantener operativos los equipos activos ante interrupciones breves del suministro de energía.
 
-Para el dimensionamiento inicial se considera el consumo de:
+Para esta propuesta se contempla la instalación de **un UPS principal dentro del MDF**, destinado principalmente a respaldar:
+
+- El switch principal.
+- Equipos auxiliares activos instalados dentro del rack.
+- Posibles equipos adicionales incorporados posteriormente en el MDF.
+
+Los patch panels y el ODF son elementos pasivos, por lo que no requieren alimentación eléctrica.
+
+Los switches departamentales se encuentran distribuidos físicamente en las diferentes áreas del edificio y, por lo tanto, no serán alimentados directamente por el UPS ubicado en el MDF.
+
+---
+
+### 13.1 Estimación del Consumo Eléctrico del Equipo Activo
+
+Para dimensionar el respaldo eléctrico de la infraestructura se considera el consumo estimado de todo el equipo activo de red del edificio:
 
 - 1 switch principal ubicado en el MDF.
 - 4 switches departamentales de 8 puertos.
 - 4 switches departamentales de 16 puertos.
 
-Los valores utilizados en esta sección corresponden a una estimación preliminar. El consumo definitivo deberá actualizarse posteriormente utilizando las especificaciones eléctricas de los modelos comerciales seleccionados.
-
-### 13.1 Estimación del Consumo Eléctrico
-
-Para realizar el cálculo preliminar se utilizan los siguientes valores de referencia:
+Los valores utilizados son estimaciones de referencia. Antes de una implementación real deberán verificarse utilizando las fichas técnicas de los modelos comerciales adquiridos.
 
 | Equipo | Cantidad | Consumo estimado por unidad | Consumo total |
 |---|---:|---:|---:|
@@ -1493,51 +1616,57 @@ Para realizar el cálculo preliminar se utilizan los siguientes valores de refer
 | Switch departamental de 16 puertos | 4 | 20 W | 80 W |
 | **Total estimado** | **9** |  | **188 W** |
 
-El consumo aproximado del equipo activo de red es de:
+Por lo tanto, el consumo aproximado del equipo activo de red es de:
 
 **188 W**
 
-Para evitar dimensionar el sistema de respaldo exactamente al límite, se agrega un margen aproximado del **25 %** para crecimiento y variaciones de consumo.
+Para evitar dimensionar el sistema de respaldo exactamente al límite y mantener capacidad para pequeñas variaciones de consumo y crecimiento, se agrega un margen del **25 %**.
 
-| Concepto | Potencia |
-|---|---:|
-| Consumo estimado actual | 188 W |
-| Margen adicional del 25 % | 47 W |
-| **Potencia de diseño** | **235 W** |
+```text
+188 W × 0.25 = 47 W
 
-Por lo tanto, el sistema de respaldo deberá soportar como mínimo aproximadamente **235 W** de carga.
+188 W + 47 W = 235 W
+```
+
+---
 
 ### 13.2 Capacidad Recomendada del UPS
 
-Aunque la carga calculada es relativamente baja, no se recomienda seleccionar un UPS cuya capacidad se encuentre demasiado próxima al consumo actual.
-
-Como propuesta inicial se recomienda un UPS de aproximadamente:
+Tomando como referencia una carga de diseño aproximada de **235 W**, se propone utilizar un UPS con capacidad de:
 
 **1000 VA / 600 W o superior**
 
-Esta capacidad proporciona margen suficiente respecto a los aproximadamente 235 W considerados para el diseño y permite soportar pequeñas ampliaciones futuras.
+Esta capacidad supera ampliamente la potencia estimada y proporciona margen para futuras ampliaciones y equipos auxiliares.
 
 | Característica | Recomendación |
 |---|---|
 | Capacidad aparente | 1000 VA o superior |
 | Potencia real soportada | 600 W o superior |
-| Carga estimada del diseño | 235 W |
+| Consumo estimado de los 9 switches | 188 W |
+| Potencia de diseño con margen | 235 W |
 | Tipo recomendado | UPS line-interactive |
 | Protección | Regulación de voltaje y respaldo por batería |
 | Ubicación principal | MDF |
 
-La autonomía exacta dependerá del modelo de UPS seleccionado y de la capacidad de sus baterías, por lo que deberá verificarse en la ficha técnica del equipo antes de realizar la compra.
+La autonomía exacta dependerá del modelo seleccionado, de la capacidad de sus baterías y de la carga conectada.
 
-### 13.3 Distribución del Respaldo Eléctrico
+El cálculo de **235 W** representa la referencia de consumo del conjunto del equipo activo del edificio. Sin embargo, debido a que los ocho switches departamentales se encuentran distribuidos físicamente en diferentes áreas, un único UPS instalado en el MDF no puede alimentarlos directamente sin disponer de una infraestructura eléctrica respaldada que llegue hasta dichos departamentos.
 
-El switch principal se encontrará dentro del MDF y podrá conectarse directamente al UPS instalado en el rack.
+---
 
-Sin embargo, los switches departamentales estarán distribuidos físicamente en las diferentes áreas del edificio. Por esta razón, para que todos ellos dispongan realmente de respaldo eléctrico se deberá utilizar una de las siguientes alternativas:
+### 13.3 Respaldo de los Switches Departamentales
 
-1. Alimentación eléctrica respaldada desde un circuito central protegido por UPS.
-2. UPS locales para los switches departamentales.
+Los ocho switches departamentales se encuentran distribuidos físicamente en diferentes áreas del edificio, por lo que no pueden conectarse directamente al UPS instalado dentro del MDF.
 
-Para el diseño de QuetzalDev S.A. se considera el consumo de los nueve switches como carga total de referencia. La forma definitiva de distribución eléctrica deberá coordinarse con la infraestructura eléctrica del edificio.
+Si se desea proporcionar respaldo eléctrico también a estos equipos, será necesario implementar alguna de las siguientes alternativas:
+
+1. Instalar un UPS local en cada departamento.
+2. Utilizar circuitos eléctricos respaldados desde un sistema central.
+3. Implementar posteriormente una solución de respaldo eléctrico distribuido.
+
+Estas alternativas no se incluyen dentro del presupuesto actual de la práctica.
+
+El UPS considerado en el presupuesto corresponde específicamente al **MDF y a los equipos activos instalados dentro de dicho cuarto de telecomunicaciones**.
 
 ### 13.4 Equipos Respaldados en el MDF
 
@@ -1559,7 +1688,7 @@ La utilización de un UPS permite:
 - Facilitar un apagado controlado en caso de una interrupción prolongada.
 - Mantener capacidad disponible para futuras ampliaciones.
 
-La capacidad definitiva del UPS será confirmada después de seleccionar los modelos comerciales de los switches y conocer su consumo eléctrico real.
+La capacidad definitiva del UPS deberá verificarse mediante las fichas técnicas de los equipos que se adquieran y su consumo eléctrico real antes de realizar la implementación.
 
 ---
 
@@ -1609,12 +1738,13 @@ Para QuetzalDev S.A. se utilizará la configuración:
 
 **T568B → T568B**
 
-Este tipo de conexión se utilizará en los enlaces de cobre entre dispositivos de diferente tipo, principalmente:
+Este esquema de terminación se utilizará en el canal de cableado horizontal de cobre, manteniendo T568B de forma uniforme en las terminaciones correspondientes.
 
-- PC → toma de red.
-- Laptop → toma de red.
-- Servidor → toma de red.
-- Patch panel → switch departamental.
+Dentro de la infraestructura se aplica principalmente en:
+
+- Patch cord del dispositivo final hacia la toma de red.
+- Cableado permanente entre la toma de red y el patch panel.
+- Patch cord entre el patch panel y el switch departamental.
 
 #### Ejemplo de disposición Straight-Through T568B - T568B
 
@@ -1679,7 +1809,10 @@ Por ejemplo:
 - Pin 3 se relaciona con el pin 1.
 - Pin 6 se relaciona con el pin 2.
 
+> **Nota:** El cable crossover se documenta como parte de los conocimientos de cableado de Capa 1. En el diseño físico propuesto para QuetzalDev S.A. no será utilizado, debido a que las conexiones entre switches se realizarán mediante fibra óptica multimodo.
+
 ---
+
 
 ### 14.5 Aplicación en QuetzalDev S.A.
 
@@ -1922,6 +2055,8 @@ Para el cableado troncal se deberá identificar:
 
 Esto permitirá realizar tareas de mantenimiento y localización de enlaces sin necesidad de seguir físicamente todo el recorrido del cable.
 
+En el diagrama físico final se utiliza una representación resumida del etiquetado para evitar saturar visualmente el plano. El detalle completo de la relación entre tomas físicas, puntos de red y enlaces troncales se documenta en las tablas del presente Manual Técnico.
+
 ---
 
 ### 16.6 Resumen del Sistema de Etiquetado
@@ -2094,7 +2229,7 @@ El flujo de conexión end-to-end permite visualizar el recorrido físico que sig
 
 En la infraestructura propuesta para QuetzalDev S.A., el recorrido general será:
 
-**Dispositivo final → Patch cord → Toma de red → Cableado horizontal UTP Cat 6 → Patch panel → Patch cord → Switch departamental → Enlace troncal de fibra multimodo → ODF → Switch principal del MDF**
+**Dispositivo final → Patch cord UTP Cat 6 → Toma de red → Cableado horizontal UTP Cat 6 → Patch panel → Patch cord UTP Cat 6 → Switch departamental → Patch cord óptico → Terminación óptica departamental → Fibra óptica multimodo → ODF del MDF → Patch cord óptico → Switch principal del MDF**
 
 ### 18.1 Recorrido General
 
@@ -2115,10 +2250,16 @@ Patch panel
       ▼
 Switch departamental
       │
-      │ Enlace troncal de fibra multimodo
+      │ Patch cord óptico
       ▼
-Terminación óptica / ODF
+Terminación óptica departamental
       │
+      │ Fibra óptica multimodo
+      │ Cableado troncal
+      ▼
+ODF ubicado en el MDF
+      │
+      │ Patch cord óptico
       ▼
 Switch principal del MDF
 ```
@@ -2129,7 +2270,7 @@ Este recorrido se mantiene para todos los departamentos, variando únicamente la
 
 Para un equipo ubicado en Recursos Humanos, por ejemplo `RecursosHumanos-PR03`, el flujo sería:
 
-**PC de Recursos Humanos → toma `RecursosHumanos-PR03` → cableado horizontal UTP Cat 6 → patch panel de Recursos Humanos → switch de Recursos Humanos → enlace `MDF-RecursosHumanos` → ODF del MDF → switch principal**
+**PC de Recursos Humanos → toma asociada a `RecursosHumanos-PR03` → cableado horizontal UTP Cat 6 → patch panel de Recursos Humanos → switch de Recursos Humanos → patch cord óptico → terminación óptica departamental → enlace `MDF-RecursosHumanos` mediante fibra óptica multimodo → ODF del MDF → patch cord óptico → switch principal del MDF**
 
 En este recorrido:
 
@@ -2142,19 +2283,19 @@ En este recorrido:
 
 Para uno de los servidores principales, por ejemplo `DataCenter-PR01`, el flujo será:
 
-**Servidor → toma `DataCenter-PR01` → cableado horizontal UTP Cat 6 → patch panel del Data Center → switch del Data Center → enlace `MDF-DataCenter` → ODF → switch principal del MDF**
+**Servidor → toma asociada a `DataCenter-PR01` → cableado horizontal UTP Cat 6 → patch panel del Data Center → switch del Data Center → patch cord óptico → terminación óptica del Data Center → enlace `MDF-DataCenter` mediante fibra óptica multimodo → ODF del MDF → patch cord óptico → switch principal del MDF**
 
 El Data Center mantiene la misma estructura de conexión que las demás áreas, aunque sus dispositivos finales corresponden exclusivamente a servidores.
 
-### 18.4 Identificación de los Segmentos
+| Segmento | Origen | Destino | Medio |
+|---|---|---|---|
+| Área de trabajo | Dispositivo final | Toma de red | Patch cord UTP Cat 6 |
+| Cableado horizontal | Toma de red | Patch panel | UTP Cat 6 |
+| Interconexión local | Patch panel | Switch departamental | Patch cord UTP Cat 6 |
+| Interconexión óptica local | Switch departamental | Terminación óptica | Patch cord óptico |
+| Cableado troncal | Terminación óptica departamental | ODF del MDF | Fibra óptica multimodo |
+| Distribución central | ODF | Switch principal | Patch cord óptico |
 
-| Segmento             | Origen               | Destino              | Medio                  |
-| -------------------- | -------------------- | -------------------- | ---------------------- |
-| Área de trabajo      | Dispositivo final    | Toma de red          | Patch cord UTP Cat 6   |
-| Cableado horizontal  | Toma de red          | Patch panel          | UTP Cat 6              |
-| Interconexión local  | Patch panel          | Switch departamental | Patch cord UTP Cat 6   |
-| Cableado troncal     | Switch departamental | MDF                  | Fibra óptica multimodo |
-| Distribución central | ODF                  | Switch principal     | Patch cord óptico      |
 
 ### 18.5 Importancia del Flujo End-to-End
 
@@ -2195,7 +2336,29 @@ Los switches departamentales fueron seleccionados con una cantidad de puertos su
 | Data Center          |                     3 |                        8 |              5 |
 | **Total**            |                **48** |                   **96** |         **48** |
 
-Esto permite agregar nuevos equipos en los diferentes departamentos sin sustituir inmediatamente los switches existentes.
+Los switches departamentales disponen en conjunto de **48 puertos RJ45 libres**, lo que proporciona capacidad suficiente para futuras ampliaciones.
+
+Sin embargo, la cantidad de nuevos puntos de red que puede incorporarse sin ampliar otros elementos de distribución está limitada actualmente por la capacidad disponible de los patch panels, los cuales disponen de **32 puertos libres**.
+
+Por lo tanto, la infraestructura actual permite incorporar hasta **32 nuevos puntos de red cableados** utilizando la capacidad existente de switches y patch panels. Una ampliación superior requeriría aumentar también la capacidad de los patch panels y demás elementos asociados.
+
+#### Capacidad de Crecimiento por Departamento
+
+| Área / Departamento | Puertos libres en switch | Puertos libres en patch panel | Nuevos puntos posibles sin ampliación |
+|---|---:|---:|---:|
+| Recepción | 4 | 4 | 4 |
+| Recursos Humanos | 8 | 4 | 4 |
+| Legal | 4 | 4 | 4 |
+| Sala de Capacitación | 6 | 2 | 2 |
+| Diseño e Innovación | 8 | 4 | 4 |
+| Dirección General | 4 | 4 | 4 |
+| Backend | 9 | 5 | 5 |
+| Data Center | 5 | 5 | 5 |
+| **Total** | **48** | **32** | **32** |
+
+La cantidad de nuevos puntos posibles se determina por el elemento con menor capacidad disponible en cada departamento. Por esta razón, aunque los switches disponen de 48 puertos RJ45 libres en conjunto, la capacidad inmediata de crecimiento queda limitada a **32 nuevos puntos de red**, debido a la disponibilidad de los patch panels.
+
+
 
 ### 19.2 Capacidad de los Patch Panels
 
@@ -2207,7 +2370,7 @@ Los patch panels también fueron dimensionados con capacidad adicional.
 | Puertos instalados en patch panels |       80 |
 | Puertos disponibles                |       32 |
 
-Los **32 puertos libres** permiten incorporar nuevos puntos de red manteniendo organizada la infraestructura de cableado horizontal.
+Los **32 puertos libres** de los patch panels representan actualmente el límite de crecimiento inmediato del cableado horizontal. Estos puertos permiten incorporar hasta 32 nuevos puntos de red utilizando los switches existentes, siempre que también se instalen las tomas, cableado UTP Cat 6, keystone jacks y demás componentes necesarios para cada nueva conexión.
 
 ### 19.3 Escalabilidad del Backbone
 
@@ -2225,6 +2388,8 @@ El ODF propuesto cuenta con capacidad para **24 fibras**, dejando:
 
 También se recomienda que los switches departamentales dispongan de interfaces SFP/SFP+ adicionales cuando sea posible.
 
+Considerando que cada enlace óptico dúplex utiliza dos fibras, esta capacidad disponible permitiría implementar hasta **4 enlaces dúplex adicionales**, siempre que también exista capacidad suficiente en el switch principal y en los demás elementos ópticos.
+
 ### 19.4 Capacidad del Switch Principal
 
 El switch principal requiere actualmente ocho interfaces ópticas, una por cada switch departamental.
@@ -2240,7 +2405,7 @@ De esta manera, el crecimiento de la red no estará limitado exclusivamente a la
 
 ### 19.5 Espacio Disponible en el Rack
 
-El rack del MDF será seleccionado con una capacidad de **12U o superior**, dejando unidades disponibles después de instalar los equipos inicialmente requeridos.
+Para el presupuesto se tomó como referencia comercial un rack de piso de **42U**, el cual supera la capacidad mínima establecida para el diseño y proporciona espacio adicional para futuras ampliaciones. La capacidad de 12U corresponde al requerimiento mínimo estimado, mientras que el modelo comercial seleccionado como referencia dispone de una capacidad mayor.
 
 Este espacio permitirá incorporar posteriormente elementos como:
 
@@ -2275,17 +2440,16 @@ De igual manera, se contempla una reserva en el cálculo del cableado troncal pa
 
 ### 19.8 Resumen de Escalabilidad
 
-| Elemento                 | Situación actual                 | Capacidad para crecimiento               |
-| ------------------------ | -------------------------------- | ---------------------------------------- |
-| Switches departamentales | 48 puertos utilizados            | 48 puertos RJ45 libres                   |
-| Patch panels             | 48 puntos utilizados             | 32 puertos libres                        |
-| ODF                      | 16 fibras utilizadas             | 8 fibras libres                          |
-| Switch principal         | 8 enlaces necesarios             | Se seleccionará capacidad superior a 8   |
-| Rack                     | Equipos actuales                 | Espacio reservado                        |
-| Canalización             | Rutas actuales                   | Capacidad para nuevos cables             |
-| Cable UTP                | Aproximadamente 345 m requeridos | Cable restante de las bobinas adquiridas |
-
-La combinación de estos elementos permite que la infraestructura física pueda adaptarse al crecimiento de QuetzalDev S.A. sin requerir una sustitución completa del sistema de cableado estructurado.
+| Elemento | Situación actual | Capacidad para crecimiento |
+|---|---|---|
+| Switches departamentales | 48 puertos utilizados de 96 | 48 puertos RJ45 libres |
+| Patch panels | 48 puertos utilizados de 80 | 32 puertos libres |
+| Crecimiento inmediato de puntos cableados | 48 puntos actuales | Hasta 32 nuevos puntos utilizando la infraestructura de distribución existente |
+| ODF | 16 fibras utilizadas de 24 | 8 fibras libres, equivalentes a hasta 4 enlaces dúplex |
+| Switch principal | 8 enlaces necesarios | Se seleccionará capacidad superior a 8 |
+| Rack | Equipos actuales | Espacio reservado |
+| Canalización | Rutas actuales | Capacidad prevista para nuevos cables |
+| Cable UTP | Aproximadamente 345 m requeridos | Reserva disponible de las bobinas adquiridas |
 
 
 ---
@@ -2298,28 +2462,28 @@ Los precios corresponden a valores de referencia consultados en comercios de Gua
 
 | Equipo / Material | Cantidad | Precio unitario aproximado | Subtotal |
 |---|---:|---:|---:|
-| Switch principal con capacidad superior a 8 interfaces SFP | 1 | Q4,166.00 | Q4,166.00 |
-| Switch administrable de 8 puertos con SFP | 4 | Q1,177.00 | Q4,708.00 |
-| Switch administrable de 16 puertos con SFP | 4 | Q1,727.00 | Q6,908.00 |
-| Kit de 2 módulos SFP multimodo | 8 | Q698.00 | Q5,584.00 |
-| Bobina UTP Cat 6 de 305 m | 2 | Q519.00 | Q1,038.00 |
-| Patch panel Cat 6 de 8 puertos | 4 | Q150.00  | Q600.00 |
-| Patch panel Cat 6 de 12 puertos | 4 | Q200.00  | Q800.00 |
+| Switch principal MikroTik con capacidad superior a 8 interfaces SFP | 1 | Q4,166.00 | Q4,166.00 |
+| Switch Grandstream administrable de 8 puertos con interfaces SFP | 4 | Q1,177.00 | Q4,708.00 |
+| Switch Grandstream administrable de 16 puertos con interfaces SFP | 4 | Q1,727.00 | Q6,908.00 |
+| Kit MikroTik de 2 módulos SFP 1.25G (16 módulos en total) | 8 kits | Q698.00 | Q5,584.00 |
+| Bobina Xtech XTC-226 UTP Cat 6 de 305 m | 2 | Q519.00 | Q1,038.00 |
+| Patch panel Cat 6 de 8 puertos | 4 | Q150.00 | Q600.00 |
+| Patch panel Cat 6 de 12 puertos | 4 | Q200.00 | Q800.00 |
 | Keystone Jack RJ45 Cat 6 | 48 | Q20.00 | Q960.00 |
-| Placas y cajas para las 25 tomas | 1 lote | Q181.00  | Q181.00 |
+| Placas y cajas para las 25 tomas de red | 1 lote | Q181.00 | Q181.00 |
 | Patch cord UTP Cat 6 | 96 | Q18.00 | Q1,728.00 |
-| ODF de 24 fibras | 1 | Q600.00  | Q600.00 |
-| Fibra óptica multimodo para backbone, aproximadamente 100 m | 1 | Q1,500.00  | Q1,500.00 |
-| Caja de terminación óptica departamental | 8 | Q150.00  | Q1,200.00 |
-| Patch cord óptico dúplex | 16 | Q75.00  | Q1,200.00 |
-| Pigtails, adaptadores y accesorios para fibra | 1 lote | Q800.00  | Q800.00 |
-| Rack de piso | 1 | Q1,812.00 | Q1,812.00 |
-| Organizador horizontal de cableado 1U | 2 | Q104.00 | Q208.00 |
-| PDU para rack | 1 | Q350.00  | Q350.00 |
-| UPS 1000 VA / 600 W | 1 | Q714.00 | Q714.00 |
-| Canaleta PVC para cableado horizontal | 100 m aprox. | Q15.00/m  | Q1,500.00 |
-| Bandeja o escalerilla para backbone | 30 m aprox. | Q75.00/m  | Q2,250.00 |
-| Material para etiquetado y consumibles | 1 lote | Q150.00  | Q150.00 |
+| ODF de 24 fibras para montaje en rack | 1 | Q600.00 | Q600.00 |
+| Fibra óptica multimodo para backbone, aproximadamente 100 m | 1 | Q1,500.00 | Q1,500.00 |
+| Caja de terminación óptica departamental | 8 | Q150.00 | Q1,200.00 |
+| Patch cord óptico dúplex | 16 | Q75.00 | Q1,200.00 |
+| Pigtails, adaptadores y accesorios para fibra óptica | 1 lote | Q800.00 | Q800.00 |
+| Rack NextLink de piso de 4 postes, 19 pulgadas, 42U | 1 | Q1,812.00 | Q1,812.00 |
+| Organizador horizontal NextLink de cableado 1U | 2 | Q104.00 | Q208.00 |
+| PDU para rack | 1 | Q350.00 | Q350.00 |
+| APC Easy UPS BV1000, 1000 VA / 600 W | 1 | Q714.00 | Q714.00 |
+| Canaleta cerrada de PVC para cableado horizontal | 100 m aprox. | Q15.00/m | Q1,500.00 |
+| Bandeja metálica cerrada para backbone | 30 m aprox. | Q75.00/m | Q2,250.00 |
+| Material para etiquetado y consumibles | 1 lote | Q150.00 | Q150.00 |
 | **TOTAL ESTIMADO** |  |  | **Q38,957.00** |
 
 ### 20.1 Consideraciones del Presupuesto
@@ -2381,17 +2545,77 @@ Sin embargo, esta decisión proporciona beneficios como:
 
 Por esta razón, se considera que la inversión adicional se encuentra justificada dentro del diseño propuesto para QuetzalDev S.A.
 
+### 20.4 Referencias Comerciales del Presupuesto
+
+Para la elaboración del presupuesto se consultaron catálogos comerciales disponibles en Guatemala, principalmente para obtener valores de referencia de switches, módulos ópticos, cableado UTP, componentes de terminación, rack y sistema UPS.
+
+Entre las marcas utilizadas como referencia se encuentran:
+
+- Grandstream para switches departamentales.
+- MikroTik para el switch principal y módulos SFP.
+- Xtech para la bobina UTP Cat 6.
+- Linet-Lan para keystone jacks y patch cords Cat 6.
+- NextLink para rack y organizadores de cableado.
+- APC para el sistema UPS.
+
+Los precios corresponden a valores consultados durante agosto de 2026 y pueden variar de acuerdo con disponibilidad, promociones, proveedor y fecha de adquisición.
+
+Los elementos para los cuales no se seleccionó un modelo comercial específico mantienen un precio aproximado dentro del presupuesto y deberán ser confirmados mediante una cotización antes de realizar una implementación real.
+
+### 20.5 Compra de Materiales y Uso de Proveedor Especializado
+
+Para una posible implementación de la infraestructura se pueden considerar dos alternativas principales: realizar la compra individual de los materiales o contratar a un proveedor especializado que suministre e instale la solución completa.
+
+La compra individual permite comparar precios entre diferentes distribuidores y seleccionar de forma independiente los switches, cableado, rack, UPS y accesorios. Esta alternativa puede permitir un mayor control sobre el presupuesto, pero requiere verificar cuidadosamente la compatibilidad entre los diferentes componentes adquiridos.
+
+Por otro lado, trabajar con un proveedor especializado puede facilitar la instalación, terminación y certificación del cableado estructurado. Esta opción resulta especialmente conveniente para el backbone de fibra óptica, debido a que su instalación y terminación puede requerir herramientas, conocimientos y equipos especializados.
+
+Para QuetzalDev S.A. se propone una estrategia combinada. Los equipos y materiales estandarizados pueden adquirirse directamente utilizando el presupuesto presentado, mientras que para la instalación, terminación y certificación de la fibra óptica se recomienda considerar el apoyo de un proveedor especializado.
+
+El costo de mano de obra, instalación y certificación no se encuentra incluido dentro del presupuesto actual y deberá cotizarse por separado antes de realizar una implementación real.
+
 ---
 
 ## 21. Conclusiones
 
-Conclusiones generales del diseño físico propuesto para QuetzalDev S.A.
+El diseño físico desarrollado para QuetzalDev S.A. permite organizar de forma estructurada la infraestructura de red requerida para los ocho departamentos de la empresa, considerando un total de **48 dispositivos finales**, distribuidos entre computadoras de escritorio, laptops y servidores.
+
+La utilización de una **topología jerárquica tipo árbol o estrella extendida** permite centralizar los enlaces troncales en el MDF y mantener una topología en estrella dentro de cada departamento. Esta estructura facilita la administración, identificación y mantenimiento de las conexiones físicas.
+
+Para el cableado horizontal se seleccionó **UTP categoría 6**, debido a que las distancias internas son adecuadas para este medio y representa una solución práctica y económica para conectar los dispositivos finales. Para el cableado troncal se propuso **fibra óptica multimodo**, proporcionando mayor capacidad de transmisión, inmunidad frente a interferencias electromagnéticas y mejores posibilidades de crecimiento futuro.
+
+La ubicación del MDF en una zona central cercana al Hall Central y al Vestíbulo permite reducir los recorridos hacia los diferentes departamentos y facilita la distribución de las rutas de canalización. Dentro del MDF se concentran los principales elementos de infraestructura, como el switch principal, ODF, rack, organizadores y sistema de respaldo eléctrico.
+
+El dimensionamiento de switches, patch panels, ODF y canalización se realizó dejando capacidad disponible para futuras ampliaciones. Actualmente se requieren 48 puntos de red, mientras que la propuesta mantiene puertos adicionales en los switches, patch panels y fibras disponibles en el ODF.
+
+También se estableció un sistema de etiquetado para identificar puntos de red, tomas físicas y enlaces troncales, permitiendo relacionar cada conexión con su ubicación y recorrido. Aunque el esquema utilizado es simplificado, se comparó con los principios establecidos por TIA/EIA-606 para reconocer la importancia de una administración estructurada de la infraestructura de telecomunicaciones.
+
+Finalmente, el presupuesto estimado permite identificar los principales materiales y equipos necesarios para una posible implementación del diseño. Debido a que las cantidades, distancias y precios fueron obtenidos a partir del plano y de valores de referencia, estos deberán verificarse mediante mediciones físicas y cotizaciones actualizadas antes de realizar una instalación real.
 
 ---
 
 ## 22. Referencias
 
-* Material de clase - Semana 2.
-* Material de clase - Semana 3.
-* Estándares y documentación técnica consultada.
-* Catálogos de productos utilizados para el presupuesto.
+1. Universidad de San Carlos de Guatemala, Facultad de Ingeniería, Escuela de Ingeniería en Ciencias y Sistemas. (2026). **Práctica 1 - QuetzalDev S.A.** Laboratorio de Redes de Computadoras 1, Segundo Semestre 2026.
+
+2. Universidad de San Carlos de Guatemala, Facultad de Ingeniería, Escuela de Ingeniería en Ciencias y Sistemas. (2026). **Lectura Semana 2 - Conceptos Generales de Redes de Computadoras.** Laboratorio de Redes de Computadoras 1.
+
+3. Universidad de San Carlos de Guatemala, Facultad de Ingeniería, Escuela de Ingeniería en Ciencias y Sistemas. (2026). **Semana 2 - Conceptos Generales.** Unidad 1: Fundamentos e Infraestructura de las Redes.
+
+4. Universidad de San Carlos de Guatemala, Facultad de Ingeniería, Escuela de Ingeniería en Ciencias y Sistemas. (2026). **Semana 3 - Cableado Estructurado.** Unidad 1: Fundamentos e Infraestructura de las Redes.
+
+5. Odom, W. (2019). **CCNA 200-301 Official Cert Guide, Volume 1.** Cisco Press.
+
+6. Cisco Networking Academy. (2024). **Introduction to Networks.** Material de formación en fundamentos de redes.
+
+7. Telecommunications Industry Association (TIA). **ANSI/TIA-606 - Administration Standard for Telecommunications Infrastructure.** Estándar utilizado como referencia para la administración e identificación de infraestructura de telecomunicaciones.
+
+8. Siemon. (2022). **Catálogo de soluciones de cableado estructurado.** Material de referencia para componentes de infraestructura de telecomunicaciones.
+
+9. Panduit. (2025). **Catálogo de infraestructura de redes.** Material de referencia para cableado, racks, canalización y elementos de terminación.
+
+10. Kemik Guatemala. (2026). **Catálogo comercial de equipos y materiales de red.** Consultado como referencia para la estimación de precios de switches, cableado, UPS y accesorios.
+
+---
+
+**Nota:** Los precios incluidos en el presupuesto corresponden a valores de referencia y pueden variar según disponibilidad, marca, proveedor y fecha de adquisición.
