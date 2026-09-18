@@ -1599,3 +1599,430 @@ La implementación del Edificio Corporativo permite demostrar los siguientes con
 - Seguridad WPA2-PSK con AES.
 - Aislamiento entre VLAN 18 y VLAN 58.
 - Funcionamiento completamente en Capa 2, sin routing inter-VLAN.
+
+---
+
+## 7. Área de Producción
+
+El Área de Producción fue diseñada para representar un segmento de red industrial donde existen dispositivos Legacy conectados mediante un Hub.
+
+Esta sección permite demostrar el funcionamiento de la VLAN 38 `PRODUCCION`, la conexión mediante Trunk hacia el switch central, la operación de VTP y, principalmente, la diferencia entre el comportamiento de un Hub y un Switch respecto a los dominios de colisión.
+
+La red de Producción funciona únicamente en Capa 2 y no posee routing inter-VLAN.
+
+---
+
+### 7.1 Topología implementada
+
+La estructura implementada es la siguiente:
+
+```text
+                         CORE-SW
+                            |
+                          Fibra
+                            |
+                         PROD-SW
+                            |
+                         Fa0/1
+                            |
+                       HUB-LEGACY
+                     /    /   \    \
+                    /    /     \    \
+               MAQ-01 MAQ-02 MAQ-03 MAQ-04
+```
+
+El switch `PROD-SW` proporciona la conexión entre el segmento Legacy y el backbone principal de la red.
+
+Los cuatro equipos de Producción están conectados a un Hub para representar un entorno donde todos los dispositivos comparten el mismo medio físico.
+
+---
+
+### 7.2 Dispositivos utilizados
+
+Para esta sección se utilizaron los siguientes dispositivos:
+
+| Dispositivo | Tipo | Función |
+|---|---|---|
+| PROD-SW | Switch-PT | Switch de acceso del área de Producción |
+| HUB-LEGACY | Hub-PT | Segmento Legacy compartido |
+| MAQ-01 | PC-PT | Máquina de Producción |
+| MAQ-02 | PC-PT | Máquina de Producción |
+| MAQ-03 | PC-PT | Máquina de Producción |
+| MAQ-04 | PC-PT | Máquina de Producción |
+
+---
+
+### 7.3 Módulos instalados en PROD-SW
+
+En `PROD-SW` se instalaron dos módulos:
+
+```text
+1 × PT-SWITCH-NM-1FFE
+1 × PT-SWITCH-NM-1CFE
+```
+
+Su utilización fue:
+
+| Puerto | Tipo | Dispositivo conectado |
+|---|---|---|
+| Fa0/1 | Cobre FastEthernet | HUB-LEGACY |
+| Fa1/1 | Fibra FastEthernet | CORE-SW Fa9/1 |
+
+El enlace de fibra proporciona la conexión entre Producción y el switch central de la infraestructura.
+
+---
+
+### 7.4 Enlace entre CORE-SW y PROD-SW
+
+El enlace principal quedó establecido de la siguiente manera:
+
+```text
+CORE-SW Fa9/1  <------ Fibra ------>  PROD-SW Fa1/1
+```
+
+Este enlace fue configurado como Trunk IEEE 802.1Q.
+
+Configuración utilizada en `CORE-SW`:
+
+```cisco
+interface fastEthernet 9/1
+ switchport mode trunk
+ switchport trunk native vlan 98
+ switchport trunk allowed vlan 18,28,38,48,58,98
+exit
+```
+
+Configuración utilizada en `PROD-SW`:
+
+```cisco
+interface fastEthernet 1/1
+ switchport mode trunk
+ switchport trunk native vlan 98
+ switchport trunk allowed vlan 18,28,38,48,58,98
+exit
+```
+
+La VLAN nativa utilizada es:
+
+```text
+VLAN 98 - NATIVA
+```
+
+Las VLAN permitidas sobre el enlace son:
+
+```text
+18,28,38,48,58,98
+```
+
+---
+
+### 7.5 Configuración VTP
+
+`PROD-SW` fue configurado como cliente VTP.
+
+Los parámetros utilizados fueron:
+
+```text
+Dominio VTP: Smart_1
+Contraseña: proyecto12S2026
+Versión: 2
+Modo: Client
+```
+
+Configuración aplicada:
+
+```cisco
+vtp domain Smart_1
+vtp password proyecto12S2026
+vtp version 2
+vtp mode client
+```
+
+La verificación mediante:
+
+```cisco
+show vtp status
+```
+
+mostró:
+
+```text
+VTP Version: 2
+VTP Operating Mode: Client
+VTP Domain Name: Smart_1
+VTP V2 Mode: Enabled
+```
+
+Esto confirma que `PROD-SW` forma parte correctamente del dominio VTP del proyecto.
+
+---
+
+### 7.6 Configuración PVST
+
+El switch de Producción utiliza PVST:
+
+```cisco
+spanning-tree mode pvst
+```
+
+Esto mantiene consistencia con la configuración utilizada en el resto de la infraestructura.
+
+El `CORE-SW` continúa funcionando como Root Bridge para las VLAN definidas en la topología.
+
+---
+
+### 7.7 VLAN 38 - PRODUCCION
+
+El puerto de `PROD-SW` conectado al Hub fue configurado como puerto Access perteneciente a VLAN 38.
+
+Configuración:
+
+```cisco
+interface fastEthernet 0/1
+ switchport mode access
+ switchport access vlan 38
+exit
+```
+
+La verificación mediante:
+
+```cisco
+show vlan brief
+```
+
+mostró:
+
+```text
+38   PRODUCCION   active   Fa0/1
+```
+
+Debido a que el Hub está conectado al puerto `Fa0/1`, todos los dispositivos conectados al `HUB-LEGACY` pertenecen a la VLAN 38.
+
+---
+
+### 7.8 Verificación de Trunk, VLAN y VTP
+
+Se utilizaron los comandos:
+
+```cisco
+show vlan brief
+show interfaces trunk
+show vtp status
+```
+
+Los resultados confirmaron:
+
+```text
+Fa0/1 → VLAN 38 PRODUCCION
+Fa1/1 → Trunk IEEE 802.1Q
+Native VLAN → 98
+VTP Mode → Client
+VTP Domain → Smart_1
+```
+
+El enlace `Fa1/1` transporta correctamente las VLAN:
+
+```text
+18,28,38,48,58,98
+```
+
+![Configuración VLAN, Trunk y VTP de Producción](evidencias/23_prod_sw_vlan_trunk_vtp.png)
+
+---
+
+### 7.9 Direccionamiento de las máquinas
+
+Las cuatro máquinas fueron configuradas dentro de la red:
+
+```text
+192.168.38.0/24
+```
+
+El direccionamiento utilizado fue:
+
+| Dispositivo | VLAN | Dirección IP | Máscara |
+|---|---:|---|---|
+| MAQ-01 | 38 | 192.168.38.11 | 255.255.255.0 |
+| MAQ-02 | 38 | 192.168.38.12 | 255.255.255.0 |
+| MAQ-03 | 38 | 192.168.38.13 | 255.255.255.0 |
+| MAQ-04 | 38 | 192.168.38.14 | 255.255.255.0 |
+
+No se configuró Default Gateway debido a que el proyecto trabaja únicamente a nivel de Capa 2 y no se implementó routing inter-VLAN.
+
+---
+
+### 7.10 Prueba de conectividad dentro de Producción
+
+Para comprobar la comunicación dentro de VLAN 38 se realizó una prueba desde:
+
+```text
+MAQ-01
+192.168.38.11
+```
+
+hacia:
+
+```text
+MAQ-04
+192.168.38.14
+```
+
+Comando utilizado:
+
+```text
+ping 192.168.38.14
+```
+
+La prueba fue exitosa, obteniendo comunicación entre ambas máquinas.
+
+Esto demuestra que los dispositivos conectados al `HUB-LEGACY` pueden comunicarse correctamente dentro de la VLAN 38.
+
+![Ping dentro de VLAN 38](evidencias/24_ping_produccion_legacy.png)
+
+---
+
+### 7.11 Segmento Legacy y dominio de colisión
+
+El dispositivo `HUB-LEGACY` fue utilizado específicamente para representar un entorno Legacy.
+
+Un Hub funciona en la Capa 1 del modelo OSI y no posee una tabla de direcciones MAC.
+
+Cuando recibe una señal por uno de sus puertos, la replica hacia los demás puertos.
+
+Por esta razón, los siguientes elementos comparten un único dominio de colisión:
+
+```text
+MAQ-01
+MAQ-02
+MAQ-03
+MAQ-04
+HUB-LEGACY
+Enlace hacia PROD-SW Fa0/1
+```
+
+A diferencia de un switch, el Hub no crea un dominio de colisión independiente por cada puerto.
+
+---
+
+### 7.12 Simulación del funcionamiento del Hub
+
+Para observar el comportamiento del segmento Legacy se utilizó el modo:
+
+```text
+Simulation
+```
+
+de Cisco Packet Tracer.
+
+Se dejaron visibles principalmente los protocolos:
+
+```text
+ARP
+ICMP
+```
+
+Se generó tráfico entre diferentes máquinas de Producción.
+
+En el Event List se pudo observar que `HUB-LEGACY` participa repetidamente en el envío de las tramas debido a que replica la señal recibida hacia sus demás puertos.
+
+Esta simulación permite observar el comportamiento característico de un Hub como repetidor de Capa 1.
+
+![Dominio de colisión del Hub](evidencias/25_dominio_colision_hub.png)
+
+---
+
+### 7.13 Dominios de colisión
+
+La implementación permite diferenciar el comportamiento de un Hub y un Switch.
+
+| Segmento | Dominios de colisión |
+|---|---:|
+| HUB-LEGACY + MAQ-01 + MAQ-02 + MAQ-03 + MAQ-04 + enlace PROD-SW Fa0/1 | 1 |
+| Enlace PROD-SW Fa1/1 ↔ CORE-SW Fa9/1 | 1 enlace independiente |
+
+Todos los dispositivos conectados al Hub comparten el mismo dominio de colisión.
+
+El enlace entre switches constituye un segmento independiente.
+
+---
+
+### 7.14 Dominio de broadcast
+
+Los dispositivos de Producción pertenecen a:
+
+```text
+VLAN 38 PRODUCCION
+```
+
+Por lo tanto, forman parte de un mismo dominio de broadcast a nivel lógico.
+
+```text
+VLAN 38 = 1 dominio de broadcast
+```
+
+Las otras VLAN de la infraestructura representan dominios de broadcast separados.
+
+---
+
+### 7.15 Aislamiento entre VLAN 38 y VLAN 18
+
+Finalmente, se comprobó el aislamiento entre Producción y Gerencia.
+
+Desde:
+
+```text
+MAQ-01
+IP: 192.168.38.11
+VLAN: 38 PRODUCCION
+```
+
+se ejecutó:
+
+```text
+ping 192.168.18.11
+```
+
+hacia:
+
+```text
+GER-PC1
+IP: 192.168.18.11
+VLAN: 18 GERENCIA
+```
+
+El resultado fue:
+
+```text
+Request timed out.
+```
+
+La prueba final obtuvo pérdida total de los paquetes enviados.
+
+Este comportamiento es correcto debido a que las VLAN 38 y 18 pertenecen a diferentes dominios de broadcast y no existe routing inter-VLAN en la infraestructura.
+
+Esto demuestra que el Área de Producción permanece aislada de la red administrativa de Gerencia.
+
+![Aislamiento VLAN 38 y VLAN 18](evidencias/26_aislamiento_vlan38_vlan18.png)
+
+---
+
+### 7.16 Resumen del Área de Producción
+
+La implementación del Área de Producción permite demostrar los siguientes conceptos:
+
+- VLAN 38 `PRODUCCION`.
+- Enlaces Trunk IEEE 802.1Q.
+- VLAN nativa 98.
+- VTP versión 2.
+- Switch en modo VTP Client.
+- PVST.
+- Conexión de fibra hacia el Core.
+- Funcionamiento de un Hub de Capa 1.
+- Segmento Legacy.
+- Dominio de colisión compartido.
+- Comunicación entre dispositivos de la misma VLAN.
+- Dominio de broadcast de VLAN 38.
+- Aislamiento entre VLAN 38 y VLAN 18.
+- Operación de la infraestructura sin routing inter-VLAN.
+
+Con estas pruebas se verificó que el Área de Producción funciona correctamente y cumple con el objetivo de representar tanto una red Ethernet conmutada como un segmento Legacy basado en un medio compartido.
