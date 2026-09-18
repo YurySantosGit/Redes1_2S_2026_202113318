@@ -3,7 +3,6 @@
 **Curso:** Redes de Computadoras 1  
 **Carné:** 202113318  
 **Archivo Packet Tracer:** `Proyecto1_202113318.pkt`  
-**Estado del documento:** Avance del proyecto  
 
 ---
 
