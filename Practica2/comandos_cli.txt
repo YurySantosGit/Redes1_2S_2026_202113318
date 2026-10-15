@@ -1,0 +1,945 @@
+PRACTICA 2 - REDES DE COMPUTADORAS 1
+Script de comandos CLI utilizados
+Carné: 202113318
+
+============================================================
+NOTAS GENERALES
+============================================================
+
+VLANs de usuario:
+  VLAN 18  - PASEO_CAYALA
+  VLAN 28  - CAYIBEL
+  VLAN 38  - CARDALES
+  VLAN 48  - PLAZA_CAYALA
+  VLAN 58  - PLAZA_NOGALES
+
+VLAN especial:
+  VLAN 99  - NATIVA
+  VLAN 999 - BLACKHOLE
+
+VTP:
+  Dominio: 202113318
+  Password: Cayala2026
+
+STP:
+  spanning-tree mode rapid-pvst
+
+EtherChannel:
+  Zona 1 utiliza LACP (carné terminado en número par).
+
+IMPORTANTE:
+- Los switches MAIN se configuraron como VTP Server.
+- Los switches ACC se configuraron como VTP Client.
+- CORE-L3 se configuró como VTP Transparent.
+- Los puertos no utilizados se asignaron a VLAN 999 y se apagaron.
+- Los trunks transportan únicamente la VLAN de la zona y VLAN 99.
+- Este archivo documenta los comandos CLI de la configuración final.
+
+============================================================
+1. CORE-L3
+============================================================
+
+enable
+configure terminal
+hostname CORE-L3
+
+spanning-tree mode rapid-pvst
+
+vtp domain 202113318
+vtp password Cayala2026
+vtp mode transparent
+
+vlan 18
+ name PASEO_CAYALA
+exit
+vlan 28
+ name CAYIBEL
+exit
+vlan 38
+ name CARDALES
+exit
+vlan 48
+ name PLAZA_CAYALA
+exit
+vlan 58
+ name PLAZA_NOGALES
+exit
+vlan 99
+ name NATIVA
+exit
+vlan 999
+ name BLACKHOLE
+exit
+
+! ----------------------------------------------------------
+! EtherChannel LACP hacia Z1-MAIN
+! CORE Fa0/1 <-> Z1-MAIN Fa0/23
+! CORE Fa0/2 <-> Z1-MAIN Fa0/24
+! ----------------------------------------------------------
+
+interface range fa0/1 - 2
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 18,99
+ channel-group 1 mode active
+ no shutdown
+exit
+
+interface port-channel 1
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 18,99
+ no shutdown
+exit
+
+! ----------------------------------------------------------
+! Trunk hacia Zona 2
+! ----------------------------------------------------------
+
+interface fa0/3
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 28,99
+ no shutdown
+exit
+
+! ----------------------------------------------------------
+! Trunk hacia Zona 3
+! ----------------------------------------------------------
+
+interface fa0/4
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 38,99
+ no shutdown
+exit
+
+! ----------------------------------------------------------
+! Trunks redundantes hacia Zona 4
+! Fa0/5 -> Z4-MAIN
+! Fa0/6 -> Z4-ACC
+! ----------------------------------------------------------
+
+interface fa0/5
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 48,99
+ no shutdown
+exit
+
+interface fa0/6
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 48,99
+ no shutdown
+exit
+
+! ----------------------------------------------------------
+! Trunk hacia Zona 5
+! ----------------------------------------------------------
+
+interface fa0/7
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 58,99
+ no shutdown
+exit
+
+! ----------------------------------------------------------
+! Puertos no utilizados -> VLAN 999 BLACKHOLE
+! ----------------------------------------------------------
+
+interface range fa0/8 - 24
+ switchport mode access
+ switchport access vlan 999
+ shutdown
+exit
+
+interface range gi0/1 - 2
+ switchport mode access
+ switchport access vlan 999
+ shutdown
+exit
+
+! ----------------------------------------------------------
+! Enrutamiento inter-VLAN mediante SVIs
+! ----------------------------------------------------------
+
+ip routing
+
+interface vlan 18
+ ip address 192.168.18.1 255.255.255.192
+ no shutdown
+exit
+
+interface vlan 28
+ ip address 192.168.28.1 255.255.255.224
+ no shutdown
+exit
+
+interface vlan 38
+ ip address 192.168.38.1 255.255.255.240
+ no shutdown
+exit
+
+interface vlan 48
+ ip address 192.168.48.1 255.255.255.192
+ no shutdown
+exit
+
+interface vlan 58
+ ip address 192.168.58.1 255.255.255.240
+ no shutdown
+exit
+
+end
+copy running-config startup-config
+
+
+============================================================
+2. Z1-MAIN
+============================================================
+
+enable
+configure terminal
+hostname Z1-MAIN
+
+spanning-tree mode rapid-pvst
+
+vtp domain 202113318
+vtp password Cayala2026
+vtp mode server
+
+vlan 18
+ name PASEO_CAYALA
+exit
+vlan 28
+ name CAYIBEL
+exit
+vlan 38
+ name CARDALES
+exit
+vlan 48
+ name PLAZA_CAYALA
+exit
+vlan 58
+ name PLAZA_NOGALES
+exit
+vlan 99
+ name NATIVA
+exit
+vlan 999
+ name BLACKHOLE
+exit
+
+! Z1-MAIN es Root Bridge de VLAN 18
+spanning-tree vlan 18 priority 4096
+
+! PC de Zona 1
+interface fa0/1
+ switchport mode access
+ switchport access vlan 18
+ spanning-tree portfast
+ no shutdown
+exit
+
+! Trunk interno hacia Z1-ACC
+interface fa0/22
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 18,99
+ no shutdown
+exit
+
+! EtherChannel LACP hacia CORE-L3
+interface range fa0/23 - 24
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 18,99
+ channel-group 1 mode active
+ no shutdown
+exit
+
+interface port-channel 1
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 18,99
+ no shutdown
+exit
+
+! Puertos no utilizados
+interface range fa0/2 - 21
+ switchport mode access
+ switchport access vlan 999
+ shutdown
+exit
+
+interface range gi0/1 - 2
+ switchport mode access
+ switchport access vlan 999
+ shutdown
+exit
+
+end
+copy running-config startup-config
+
+
+============================================================
+3. Z1-ACC
+============================================================
+
+enable
+configure terminal
+hostname Z1-ACC
+
+spanning-tree mode rapid-pvst
+
+vtp domain 202113318
+vtp password Cayala2026
+vtp mode client
+
+! PC de Zona 1
+interface fa0/1
+ switchport mode access
+ switchport access vlan 18
+ spanning-tree portfast
+ no shutdown
+exit
+
+! Trunk hacia Z1-MAIN
+interface fa0/24
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 18,99
+ no shutdown
+exit
+
+! Puertos no utilizados
+interface range fa0/2 - 23
+ switchport mode access
+ switchport access vlan 999
+ shutdown
+exit
+
+interface range gi0/1 - 2
+ switchport mode access
+ switchport access vlan 999
+ shutdown
+exit
+
+end
+copy running-config startup-config
+
+
+============================================================
+4. Z2-MAIN
+============================================================
+
+enable
+configure terminal
+hostname Z2-MAIN
+
+spanning-tree mode rapid-pvst
+
+vtp domain 202113318
+vtp password Cayala2026
+vtp mode server
+
+vlan 18
+ name PASEO_CAYALA
+exit
+vlan 28
+ name CAYIBEL
+exit
+vlan 38
+ name CARDALES
+exit
+vlan 48
+ name PLAZA_CAYALA
+exit
+vlan 58
+ name PLAZA_NOGALES
+exit
+vlan 99
+ name NATIVA
+exit
+vlan 999
+ name BLACKHOLE
+exit
+
+spanning-tree vlan 28 priority 4096
+
+! PC de Zona 2
+interface fa0/1
+ switchport mode access
+ switchport access vlan 28
+ spanning-tree portfast
+ no shutdown
+exit
+
+! Trunk hacia Z2-ACC
+interface fa0/23
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 28,99
+ no shutdown
+exit
+
+! Trunk hacia CORE-L3
+interface fa0/24
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 28,99
+ no shutdown
+exit
+
+! Puertos no utilizados
+interface range fa0/2 - 22
+ switchport mode access
+ switchport access vlan 999
+ shutdown
+exit
+
+interface range gi0/1 - 2
+ switchport mode access
+ switchport access vlan 999
+ shutdown
+exit
+
+end
+copy running-config startup-config
+
+
+============================================================
+5. Z2-ACC
+============================================================
+
+enable
+configure terminal
+hostname Z2-ACC
+
+spanning-tree mode rapid-pvst
+
+vtp domain 202113318
+vtp password Cayala2026
+vtp mode client
+
+interface fa0/1
+ switchport mode access
+ switchport access vlan 28
+ spanning-tree portfast
+ no shutdown
+exit
+
+interface fa0/24
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 28,99
+ no shutdown
+exit
+
+interface range fa0/2 - 23
+ switchport mode access
+ switchport access vlan 999
+ shutdown
+exit
+
+interface range gi0/1 - 2
+ switchport mode access
+ switchport access vlan 999
+ shutdown
+exit
+
+end
+copy running-config startup-config
+
+
+============================================================
+6. Z3-MAIN
+============================================================
+
+enable
+configure terminal
+hostname Z3-MAIN
+
+spanning-tree mode rapid-pvst
+
+vtp domain 202113318
+vtp password Cayala2026
+vtp mode server
+
+vlan 18
+ name PASEO_CAYALA
+exit
+vlan 28
+ name CAYIBEL
+exit
+vlan 38
+ name CARDALES
+exit
+vlan 48
+ name PLAZA_CAYALA
+exit
+vlan 58
+ name PLAZA_NOGALES
+exit
+vlan 99
+ name NATIVA
+exit
+vlan 999
+ name BLACKHOLE
+exit
+
+spanning-tree vlan 38 priority 4096
+
+interface fa0/1
+ switchport mode access
+ switchport access vlan 38
+ spanning-tree portfast
+ no shutdown
+exit
+
+interface fa0/23
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 38,99
+ no shutdown
+exit
+
+interface fa0/24
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 38,99
+ no shutdown
+exit
+
+interface range fa0/2 - 22
+ switchport mode access
+ switchport access vlan 999
+ shutdown
+exit
+
+interface range gi0/1 - 2
+ switchport mode access
+ switchport access vlan 999
+ shutdown
+exit
+
+end
+copy running-config startup-config
+
+
+============================================================
+7. Z3-ACC
+============================================================
+
+enable
+configure terminal
+hostname Z3-ACC
+
+spanning-tree mode rapid-pvst
+
+vtp domain 202113318
+vtp password Cayala2026
+vtp mode client
+
+interface fa0/1
+ switchport mode access
+ switchport access vlan 38
+ spanning-tree portfast
+ no shutdown
+exit
+
+interface fa0/24
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 38,99
+ no shutdown
+exit
+
+interface range fa0/2 - 23
+ switchport mode access
+ switchport access vlan 999
+ shutdown
+exit
+
+interface range gi0/1 - 2
+ switchport mode access
+ switchport access vlan 999
+ shutdown
+exit
+
+end
+copy running-config startup-config
+
+
+============================================================
+8. Z4-MAIN
+============================================================
+
+enable
+configure terminal
+hostname Z4-MAIN
+
+spanning-tree mode rapid-pvst
+
+vtp domain 202113318
+vtp password Cayala2026
+vtp mode server
+
+vlan 18
+ name PASEO_CAYALA
+exit
+vlan 28
+ name CAYIBEL
+exit
+vlan 38
+ name CARDALES
+exit
+vlan 48
+ name PLAZA_CAYALA
+exit
+vlan 58
+ name PLAZA_NOGALES
+exit
+vlan 99
+ name NATIVA
+exit
+vlan 999
+ name BLACKHOLE
+exit
+
+spanning-tree vlan 48 priority 4096
+
+interface fa0/1
+ switchport mode access
+ switchport access vlan 48
+ spanning-tree portfast
+ no shutdown
+exit
+
+! Enlace redundante hacia Z4-ACC
+interface fa0/23
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 48,99
+ no shutdown
+exit
+
+! Trunk principal hacia CORE-L3
+interface fa0/24
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 48,99
+ no shutdown
+exit
+
+interface range fa0/2 - 22
+ switchport mode access
+ switchport access vlan 999
+ shutdown
+exit
+
+interface range gi0/1 - 2
+ switchport mode access
+ switchport access vlan 999
+ shutdown
+exit
+
+end
+copy running-config startup-config
+
+
+============================================================
+9. Z4-ACC
+============================================================
+
+enable
+configure terminal
+hostname Z4-ACC
+
+spanning-tree mode rapid-pvst
+
+vtp domain 202113318
+vtp password Cayala2026
+vtp mode client
+
+interface fa0/1
+ switchport mode access
+ switchport access vlan 48
+ spanning-tree portfast
+ no shutdown
+exit
+
+! Trunk hacia Z4-MAIN
+interface fa0/23
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 48,99
+ no shutdown
+exit
+
+! Segundo enlace físico hacia CORE-L3
+interface fa0/24
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 48,99
+ no shutdown
+exit
+
+interface range fa0/2 - 22
+ switchport mode access
+ switchport access vlan 999
+ shutdown
+exit
+
+interface range gi0/1 - 2
+ switchport mode access
+ switchport access vlan 999
+ shutdown
+exit
+
+end
+copy running-config startup-config
+
+
+============================================================
+10. Z5-MAIN
+============================================================
+
+enable
+configure terminal
+hostname Z5-MAIN
+
+spanning-tree mode rapid-pvst
+
+vtp domain 202113318
+vtp password Cayala2026
+vtp mode server
+
+vlan 18
+ name PASEO_CAYALA
+exit
+vlan 28
+ name CAYIBEL
+exit
+vlan 38
+ name CARDALES
+exit
+vlan 48
+ name PLAZA_CAYALA
+exit
+vlan 58
+ name PLAZA_NOGALES
+exit
+vlan 99
+ name NATIVA
+exit
+vlan 999
+ name BLACKHOLE
+exit
+
+spanning-tree vlan 58 priority 4096
+
+interface fa0/1
+ switchport mode access
+ switchport access vlan 58
+ spanning-tree portfast
+ no shutdown
+exit
+
+! Trunk hacia Z5-ACC
+interface fa0/23
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 58,99
+ no shutdown
+exit
+
+! Trunk hacia CORE-L3
+interface fa0/24
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 58,99
+ no shutdown
+exit
+
+interface range fa0/2 - 22
+ switchport mode access
+ switchport access vlan 999
+ shutdown
+exit
+
+interface range gi0/1 - 2
+ switchport mode access
+ switchport access vlan 999
+ shutdown
+exit
+
+end
+copy running-config startup-config
+
+
+============================================================
+11. Z5-ACC
+============================================================
+
+enable
+configure terminal
+hostname Z5-ACC
+
+spanning-tree mode rapid-pvst
+
+vtp domain 202113318
+vtp password Cayala2026
+vtp mode client
+
+interface fa0/1
+ switchport mode access
+ switchport access vlan 58
+ spanning-tree portfast
+ no shutdown
+exit
+
+interface fa0/24
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 58,99
+ no shutdown
+exit
+
+interface range fa0/2 - 23
+ switchport mode access
+ switchport access vlan 999
+ shutdown
+exit
+
+interface range gi0/1 - 2
+ switchport mode access
+ switchport access vlan 999
+ shutdown
+exit
+
+end
+copy running-config startup-config
+
+
+============================================================
+12. COMANDOS DE VERIFICACION UTILIZADOS
+============================================================
+
+! VLANs
+show vlan brief
+
+! VTP
+show vtp status
+
+! Trunks
+show interfaces trunk
+
+! Rapid PVST+
+show spanning-tree
+show spanning-tree vlan 18
+show spanning-tree vlan 28
+show spanning-tree vlan 38
+show spanning-tree vlan 48
+show spanning-tree vlan 58
+
+! EtherChannel
+show etherchannel summary
+
+! Interfaces y SVIs
+show ip interface brief
+
+! Tabla de routing
+show ip route
+
+
+============================================================
+13. PRUEBA DE FAILOVER REALIZADA EN ZONA 4
+============================================================
+
+! En CORE-L3 se apagó temporalmente el enlace principal:
+
+enable
+configure terminal
+interface fa0/5
+ shutdown
+end
+
+show spanning-tree vlan 48
+
+! Durante la falla se verificó conectividad desde Z4-PC1
+! hacia Z1-PC1 (192.168.18.2).
+
+! Restauración del enlace:
+
+configure terminal
+interface fa0/5
+ no shutdown
+end
+
+show spanning-tree vlan 48
+copy running-config startup-config
+
+
+============================================================
+14. DIRECCIONAMIENTO DE DISPOSITIVOS FINALES
+============================================================
+
+Z1-PC1
+IP:      192.168.18.2
+MASK:    255.255.255.192
+GATEWAY: 192.168.18.1
+
+Z1-PC2
+IP:      192.168.18.3
+MASK:    255.255.255.192
+GATEWAY: 192.168.18.1
+
+Z2-PC1
+IP:      192.168.28.2
+MASK:    255.255.255.224
+GATEWAY: 192.168.28.1
+
+Z2-PC2
+IP:      192.168.28.3
+MASK:    255.255.255.224
+GATEWAY: 192.168.28.1
+
+Z3-PC1
+IP:      192.168.38.2
+MASK:    255.255.255.240
+GATEWAY: 192.168.38.1
+
+Z3-PC2
+IP:      192.168.38.3
+MASK:    255.255.255.240
+GATEWAY: 192.168.38.1
+
+Z4-PC1
+IP:      192.168.48.2
+MASK:    255.255.255.192
+GATEWAY: 192.168.48.1
+
+Z4-PC2
+IP:      192.168.48.3
+MASK:    255.255.255.192
+GATEWAY: 192.168.48.1
+
+Z5-PC1
+IP:      192.168.58.2
+MASK:    255.255.255.240
+GATEWAY: 192.168.58.1
+
+Z5-PC2
+IP:      192.168.58.3
+MASK:    255.255.255.240
+GATEWAY: 192.168.58.1
