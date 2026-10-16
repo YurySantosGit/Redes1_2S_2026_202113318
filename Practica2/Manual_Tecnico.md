@@ -494,28 +494,72 @@ No fue necesario configurar una ruta por defecto debido a que la práctica repre
 
 # 20. Pruebas de conectividad
 
-Se realizaron pruebas dentro de cada VLAN y entre distintas VLANs.
+Se realizaron pruebas de conectividad dentro de cada VLAN y entre VLANs diferentes para comprobar el correcto funcionamiento de la infraestructura.
 
-| # | Origen | Destino | Resultado |
-|---:|---|---|---|
-| 1 | Z1-PC1 | Z1-PC2 | Exitoso |
-| 2 | Z2-PC1 | Z2-PC2 | Exitoso |
-| 3 | Z3-PC1 | Z3-PC2 | Exitoso |
-| 4 | Z4-PC1 | Z4-PC2 | Exitoso |
-| 5 | Z5-PC1 | Z5-PC2 | Exitoso |
-| 6 | Z1-PC1 | Z2-PC1 | Exitoso |
-| 7 | Z1-PC1 | Z3-PC1 | Exitoso |
-| 8 | Z1-PC1 | Z4-PC1 | Exitoso |
-| 9 | Z1-PC1 | Z5-PC1 | Exitoso |
-| 10 | Z2-PC1 | Z5-PC1 | Exitoso |
+## 20.1 Pruebas intra-VLAN
 
-También fueron probados los gateways correspondientes.
+Para verificar la conectividad dentro de cada zona se realizaron diez pruebas intra-VLAN utilizando los dos dispositivos finales representativos de cada VLAN.
 
-![Ping hacia gateway](evidencias/13_ping_z1_pc1_gateway.png)
+| # | Origen | Destino | VLAN | Resultado |
+|---:|---|---|---:|---|
+| 1 | Z1-PC1 | Z1-PC2 | 18 | Exitoso |
+| 2 | Z1-PC2 | Z1-PC1 | 18 | Exitoso |
+| 3 | Z2-PC1 | Z2-PC2 | 28 | Exitoso |
+| 4 | Z2-PC2 | Z2-PC1 | 28 | Exitoso |
+| 5 | Z3-PC1 | Z3-PC2 | 38 | Exitoso |
+| 6 | Z3-PC2 | Z3-PC1 | 38 | Exitoso |
+| 7 | Z4-PC1 | Z4-PC2 | 48 | Exitoso |
+| 8 | Z4-PC2 | Z4-PC1 | 48 | Exitoso |
+| 9 | Z5-PC1 | Z5-PC2 | 58 | Exitoso |
+| 10 | Z5-PC2 | Z5-PC1 | 58 | Exitoso |
 
-![Pruebas Zona 1](evidencias/14_pings_z1.png)
+Todas las pruebas intra-VLAN fueron satisfactorias.
 
-![Ping inter-VLAN](evidencias/15_ping_intervlan_z2_z5.png)
+En cada prueba se obtuvo:
+
+```text
+Packets: Sent = 4, Received = 4, Lost = 0 (0% loss)
+```
+
+El valor `TTL=128` observado confirma que la comunicación se realizó directamente entre dispositivos pertenecientes a la misma VLAN, sin atravesar el dispositivo de Capa 3.
+
+También fueron probados los gateways correspondientes de cada zona.
+
+![Ping al gateway](evidencias/13_ping_z1_pc1_gateway.png)
+
+![Prueba intra-VLAN Zona 1](evidencias/14_pings_z1.png)
+
+### Evidencias de conectividad intra-VLAN
+
+![Z1-PC2 hacia Z1-PC1](evidencias/24_ping_intravlan_z1_pc2_z1_pc1.png)
+
+![Z2-PC2 hacia Z2-PC1](evidencias/25_ping_intravlan_z2_pc2_z2_pc1.png)
+
+![Z3-PC2 hacia Z3-PC1](evidencias/26_ping_intravlan_z3_pc2_z3_pc1.png)
+
+![Z4-PC2 hacia Z4-PC1](evidencias/27_ping_intravlan_z4_pc2_z4_pc1.png)
+
+![Z5-PC2 hacia Z5-PC1](evidencias/28_ping_intravlan_z5_pc2_z5_pc1.png)
+
+## 20.2 Pruebas inter-VLAN
+
+Además de las pruebas dentro de cada VLAN, se realizaron pruebas entre dispositivos pertenecientes a redes diferentes para verificar el funcionamiento del enrutamiento inter-VLAN realizado por `CORE-L3`.
+
+| # | Origen | Destino | VLAN origen | VLAN destino | Resultado |
+|---:|---|---|---:|---:|---|
+| 1 | Z1-PC1 | Z2-PC1 | 18 | 28 | Exitoso |
+| 2 | Z1-PC1 | Z3-PC1 | 18 | 38 | Exitoso |
+| 3 | Z1-PC1 | Z4-PC1 | 18 | 48 | Exitoso |
+| 4 | Z1-PC1 | Z5-PC1 | 18 | 58 | Exitoso |
+| 5 | Z2-PC1 | Z5-PC1 | 28 | 58 | Exitoso |
+
+Todas las pruebas inter-VLAN fueron exitosas.
+
+El tráfico entre VLANs diferentes es procesado por las interfaces SVI configuradas en `CORE-L3`, utilizando la función:
+
+```text
+ip routing
+```
 
 ---
 

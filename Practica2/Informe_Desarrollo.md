@@ -414,30 +414,60 @@ Esto confirmó que el dispositivo multicapa podía enrutar tráfico entre todas 
 
 # 15. Pruebas de conectividad
 
-Después de completar la configuración se realizaron pruebas de conectividad.
+Después de completar la configuración se realizaron pruebas de conectividad para verificar el funcionamiento de las cinco VLANs y del enrutamiento inter-VLAN.
 
-Se validaron tanto comunicaciones dentro de una misma VLAN como comunicaciones entre VLANs diferentes.
+## 15.1 Pruebas intra-VLAN
 
-| # | Origen | Destino | Resultado |
-|---:|---|---|---|
-| 1 | Z1-PC1 | Z1-PC2 | Exitoso |
-| 2 | Z2-PC1 | Z2-PC2 | Exitoso |
-| 3 | Z3-PC1 | Z3-PC2 | Exitoso |
-| 4 | Z4-PC1 | Z4-PC2 | Exitoso |
-| 5 | Z5-PC1 | Z5-PC2 | Exitoso |
-| 6 | Z1-PC1 | Z2-PC1 | Exitoso |
-| 7 | Z1-PC1 | Z3-PC1 | Exitoso |
-| 8 | Z1-PC1 | Z4-PC1 | Exitoso |
-| 9 | Z1-PC1 | Z5-PC1 | Exitoso |
-| 10 | Z2-PC1 | Z5-PC1 | Exitoso |
+Para cumplir con la validación de conectividad dentro de cada zona, se realizaron diez pruebas intra-VLAN utilizando los dos dispositivos finales representativos de cada zona.
 
-También se verificó la comunicación de los dispositivos con sus respectivos gateways.
+| # | Origen | Destino | VLAN | Resultado |
+|---:|---|---|---:|---|
+| 1 | Z1-PC1 | Z1-PC2 | 18 | Exitoso |
+| 2 | Z1-PC2 | Z1-PC1 | 18 | Exitoso |
+| 3 | Z2-PC1 | Z2-PC2 | 28 | Exitoso |
+| 4 | Z2-PC2 | Z2-PC1 | 28 | Exitoso |
+| 5 | Z3-PC1 | Z3-PC2 | 38 | Exitoso |
+| 6 | Z3-PC2 | Z3-PC1 | 38 | Exitoso |
+| 7 | Z4-PC1 | Z4-PC2 | 48 | Exitoso |
+| 8 | Z4-PC2 | Z4-PC1 | 48 | Exitoso |
+| 9 | Z5-PC1 | Z5-PC2 | 58 | Exitoso |
+| 10 | Z5-PC2 | Z5-PC1 | 58 | Exitoso |
 
-![Ping al gateway](evidencias/13_ping_z1_pc1_gateway.png)
+Todas las pruebas obtuvieron respuesta satisfactoria con:
 
-![Pruebas Zona 1](evidencias/14_pings_z1.png)
+```text
+Packets: Sent = 4, Received = 4, Lost = 0 (0% loss)
+```
+
+## 15.2 Pruebas inter-VLAN
+
+Además de las diez pruebas intra-VLAN, se realizaron pruebas entre dispositivos pertenecientes a VLANs diferentes para verificar el funcionamiento del enrutamiento inter-VLAN implementado en el switch multicapa `CORE-L3`.
+
+Las pruebas realizadas fueron las siguientes:
+
+| # | Origen | Destino | VLAN origen | VLAN destino | Resultado |
+|---:|---|---|---:|---:|---|
+| 1 | Z1-PC1 | Z2-PC1 | 18 | 28 | Exitoso |
+| 2 | Z1-PC1 | Z3-PC1 | 18 | 38 | Exitoso |
+| 3 | Z1-PC1 | Z4-PC1 | 18 | 48 | Exitoso |
+| 4 | Z1-PC1 | Z5-PC1 | 18 | 58 | Exitoso |
+| 5 | Z2-PC1 | Z5-PC1 | 28 | 58 | Exitoso |
+
+Todas las pruebas inter-VLAN fueron satisfactorias, confirmando que las interfaces SVI configuradas en `CORE-L3` y la función de enrutamiento mediante:
+
+```text
+ip routing
+```
+
+permiten la comunicación entre las diferentes redes de la infraestructura.
+
+Durante estas pruebas se observó un valor `TTL=127`, debido a que los paquetes atraviesan el dispositivo de Capa 3 antes de alcanzar la VLAN de destino.
+
+La conectividad entre VLANs también confirma que los dispositivos finales poseen correctamente configurados sus respectivos gateways.
 
 ![Ping entre VLANs](evidencias/15_ping_intervlan_z2_z5.png)
+
+Estas pruebas se realizaron como validación adicional de la infraestructura y complementan las diez pruebas intra-VLAN requeridas para comprobar la conectividad dentro de cada zona.
 
 ---
 
